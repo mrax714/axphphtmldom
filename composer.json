@@ -11,7 +11,7 @@
 	],
 	"autoload": {
 		"classmap": [
-			"simple_html_dom.php",
+			"libs/simple_html_dom.php",
 			"libs"
 		]
 	}
