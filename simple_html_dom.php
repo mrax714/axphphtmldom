@@ -45,6 +45,37 @@ defined('DEFAULT_SPAN_TEXT') || define('DEFAULT_SPAN_TEXT', ' ');
 defined('MAX_FILE_SIZE') || define('MAX_FILE_SIZE', 600000000);
 define('HDOM_SMARTY_AS_TEXT', 1);
 
+
+
+function retrieve_url_contents($url)
+{
+
+	$cookie_string = 'time:'.time();
+	$useragent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0';
+	$timeout = 120;
+
+	$ch = curl_init(); 
+	curl_setopt ($ch, CURLOPT_URL,$url);  
+	curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);      
+	curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt ($ch, CURLOPT_MAXREDIRS, 15);
+	curl_setopt ($ch, CURLOPT_REFERER, false);
+	curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt ($ch, CURLOPT_COOKIE, $cookie_string);     
+	curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);  
+	curl_setopt ($ch, CURLOPT_USERAGENT, $useragent);  
+	return curl_exec($ch);  
+	curl_close($ch); 
+}
+
+
+
+
+
+
+
+
 function file_get_html(
 	$url,
 	$use_include_path = false,
@@ -81,7 +112,7 @@ function file_get_html(
 		$offset,
 		$maxLen
 	);
-	// $contents = retrieve_url_contents($url);
+	 $contents = retrieve_url_contents($url);
 
 	if (empty($contents) || strlen($contents) > $maxLen) {
 		$dom->clear();
