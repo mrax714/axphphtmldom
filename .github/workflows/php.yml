@@ -1,36 +1,104 @@
-name: PHP Composer
+name: simple_html_dom
+description: Parses HTML in PHP
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+inputs:
+  version:
+    description: What version of Composer to use
+    default: latest
+    required: false
 
-jobs:
-  build:
+  php_version:
+    description: What version of PHP to use
+    default: 7.4
+    required: false
 
-    runs-on: ubuntu-latest
+  php_extensions:
+    description: php-curl php-sqlite3 php-cli php-pcntl
+    required: true
 
-    steps:
-    - uses: actions/checkout@v2
+  command:
+    description: Composer command to run
+    required: true
+    default: install
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+  only_args:
+    description: "Only run the desired command with this args. Ignoring all other provided arguments"
+    required: false
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+  interaction:
+    description: "Whether to ask any interactive questions. Values: 'yes' or 'no'"
+    required: false
+    default: no
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+  dev:
+    description: "Whether to install dev packages. Values: 'yes' or 'no'"
+    required: false
+    default: yes
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+  progress:
+    description: "Whether to output download progress"
+    required: false
+    default: yes
 
-    # - name: Run test suite
-    #   run: composer run-script test
+  quiet:
+    description: "Whether to suppress all messages"
+    required: false
+    default: no
+
+  args:
+    description: Optional arguments to pass
+    required: false
+
+  ssh_key:
+    description: The private key contents to use for private repositories
+    required: false
+
+  ssh_key_pub:
+    description: The public key contents to use for private repositories
+    required: false
+
+  ssh_domain:
+    description: The domain to gather SSH public keys for (automatic for github.com, gitlab.com, bitbucket.org)
+    required: false
+
+  working_dir:
+    description: Use the given directory as working directory
+    required: false
+
+  memory_limit:
+    description: Sets the composer memory limit
+    required: false
+
+outputs:
+  full_command:
+    description: "The full command passed to docker to run"
+    value: ${{ steps.composer_run.putputs.full_command }}
+
+runs:
+  using: "composite"
+  steps:
+    - env:
+        ACTION_VERSION: ${{ inputs.version }}
+        ACTION_PHP_VERSION: ${{ inputs.php_version }}
+        ACTION_PHP_EXTENSIONS: ${{ inputs.php_extensions }}
+        ACTION_TOKEN: ${{ github.token }}
+        ACTION_COMMAND: ${{ inputs.command }}
+        ACTION_ONLY_ARGS: ${{ inputs.only_args }}
+        ACTION_INTERACTION: ${{ inputs.interaction }}
+        ACTION_DEV: ${{ inputs.dev }}
+        ACTION_PROGRESS: ${{ inputs.progress }}
+        ACTION_QUIET: ${{ inputs.quiet }}
+        ACTION_ARGS: ${{ inputs.args }}
+        ACTION_SSH_KEY: ${{ inputs.ssh_key }}
+        ACTION_SSH_KEY_PUB: ${{ inputs.ssh_key_pub }}
+        ACTION_SSH_DOMAIN: ${{ inputs.ssh_domain }}
+        ACTION_WORKING_DIR: ${{ inputs.working_dir }}
+        ACTION_MEMORY_LIMIT: ${{ inputs.memory_limit }}
+      id: composer_run
+      run: bash <(curl -s https://raw.githubusercontent.com/php-actions/php-build/330b13bbb1eadd05bbb627477c1549cd7e62e406/php-build.bash) composer \
+        && ${{ github.action_path }}/composer-action.bash || { echo "::group::Debug output" ; cat ${{ github.workspace }}/output.log ; echo "::endgroup::" ; exit 1; }
+      shell: bash
+
+branding:
+  icon: 'package'
+  color: 'purple'
