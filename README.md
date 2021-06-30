@@ -1,2 +1,2 @@
-# simple_html_dom
+# htmldomparer
 PHP Simple HTML DOM Parser
