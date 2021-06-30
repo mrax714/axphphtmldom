@@ -1,18 +1,16 @@
-
 {
+
 	"name": "mrax714/axphphtmldom",
 	"description": "axphphtmldom",
 	"license": "0BSD",
-	"authors": [
-		{
+    "type": "library",
+    "authors": [
+        {
 			"name": "axphphtmldom axphphtmldom",
 			"email": "axphphtmldom@cuab.sdde"
-		}
-	],
-	"autoload": {
-		"classmap": [
-			"libs/simple_html_dom.php",
-			"libs"
-		]
-	}
+        }
+    ],
+    "autoload": {
+        "psr-4": {"mrax714\\axphphtmldom\\": "libs/"}
+    }
 }
