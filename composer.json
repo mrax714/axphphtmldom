@@ -1,1 +1,18 @@
 
+{
+	"name": "mrax714/simplehtmldom",
+	"description": "simplehtmldom",
+	"license": "0BSD",
+	"authors": [
+		{
+			"name": "Ufwe Hunfeldsd",
+			"email": "phpcfrawl@cuab.sdde"
+		}
+	],
+	"autoload": {
+		"classmap": [
+			"libs/html_dom.class.php",
+			"libs"
+		]
+	}
+}
